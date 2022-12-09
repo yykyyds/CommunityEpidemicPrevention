@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>进入申请列表</title>
+    <link href="~/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <table id="entryList" lay-filter="entryFilter"></table>
+
+    <form id="EntryForm" style="display:none;padding:20px" action="" class="layui-form entryForm">
+        <input id="id" name="id" hidden />
+        <input id="userName" name="userName" hidden />
+        <div class="layui-form-item">
+            <label class="layui-form-label">目的地</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" id="destination" type="text" name="destination"
+                       lay-verify="required" lay-reqtext="目的地是必填项" placeholder="请输入目的地" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">进入时间</label>
+            <div class="layui-input-block">
+                <input id="entryTime" type="text" name="entryTime" lay-verify="required" lay-reqtext="进入时间是必填项"
+                        placeholder="请输选择进入时间" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <select name="status" lay-verify="required" lay-reqtext="状态是必选项">
+                    <option value="">请选择一个状态</option>
+                    <option value="0">审核中</option>
+                    <option value="1">未通过</option>
+                    <option value="2">已完成</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="Put" type="submit" class="layui-btn" lay-submit="" lay-filter="PutEntry">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/layui/layui.js"></script>
+    <script>
+        layui.use('table', function () {
+            var table = layui.table
+                , form = layui.form
+                , laydate = layui.laydate; //下拉菜单
+
+            //第一个实例
+            table.render({
+                elem: '#entryList'
+                , height: 500
+                , url: '../Entry/GetEntrys' //数据接口
+                , page: true //开启分页
+                , toolbar: 'default'//工具栏
+                , cols: [[ //表头
+                    { type: 'checkbox', fixed: 'left' }
+                    , { field: 'userName', title: '用户名', fixed: 'left' }
+                    , { field: 'id', title: 'ID', sort: true, fixed: 'left' }
+                    , { field: 'destination', title: '目的地'}
+                    , { field: 'entryTime', title: '进入时间', sort: true}
+                    , { field: 'status', title: '状态', sort: true, templet: '#status' }
+                    , { fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width:240, fixed: 'right' }
+                ]]
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#entryTime' //指定元素
+                , type: 'datetime' //类型为日期时间选择器
+            });
+
+            //监听头部工具栏事件
+            table.on('toolbar(entryFilter)', function(obj){
+                var checkStatus = table.checkStatus(obj.config.id)
+                    , data = checkStatus.data; //获取选中的数据
+                switch (obj.event) {
+                    case 'add':
+                        //打开添加表单
+                        layer.msg('添加操作被禁止');
+                        //layer.alert('添加操作被禁止', { icon: 1 });
+                        break;
+                    case 'update':
+                        if(data.length == 0){
+                            layer.msg("请选择一条数据");
+                        }
+                        else if (data.length > 1) {
+                            layer.msg("只能同时编辑一个");
+                        }
+                        else if (data.length == 1) {
+                            var thisData = data[0]
+                            layer.open({
+                                type: 1,//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层)
+                                area: ['70%', '90%'],
+                                title: '修改进入申请信息',
+                                data: data,
+                                content: $("#EntryForm"),
+                                shade: 0,
+                                success: function (layero, index) {
+                                    $("#id").val(thisData.id);
+                                    $("#userName").val(thisData.userName);
+                                    $("#destination").val(thisData.destination);
+                                    $("#entryTime").val(thisData.entryTime);
+                                },
+                                cancel: function (layero, index) {
+                                    $("#EntryForm").hide();
+                                    $("#EntryForm")[0].reset();
+                                    layer.closeAll();
+                                }
+                            })
+                        }
+                        break;
+                    case 'delete':
+                        if (data.length > 0) {
+                            layer.confirm("真的要删除吗？", function (index) {
+                                let Ids = new Array();
+                                $.each(data, function (i, item) {
+                                    Ids.push(item.id)
+                                });
+                                layer.close(index);
+                                $.ajax({
+                                    url: "../Entry/DeleteEntry",
+                                    method: "delete",
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(Ids),
+                                    success: function (res) {
+                                        layer.msg('删除成功。');
+                                        //刷新当前页面
+                                        location.reload();
+                                    },
+                                    error: function (res) {
+                                        //console.log(res)
+                                        layer.msg('发生异常！');
+                                    }
+                                })
+                            })
+                        }
+                        else {
+                            layer.msg("至少选择一条数据！");
+                        }
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(entryFilter)', function (obj) { //注：tool 是工具条事件名，entryFilter 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    , layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'delete') {
+                    layer.confirm('真的删除吗？', function (index) {
+                        let Ids = new Array()
+                        Ids.push(data.id)
+                        $.ajax({
+                            url: "../Entry/DeleteEntry",
+                            method: "Delete",
+                            contentType: 'application/json',
+                            data: JSON.stringify(Ids),
+                            success: function (res) {
+                                layer.msg('删除成功');
+                                obj.del(); //删除对应行（tr）的DOM结构
+                            },
+                            error: function (res) {
+                                layer.msg('发生异常！');
+                            }
+                        })
+                        //向服务端发送删除指令
+                        layer.close(index);//关闭提示框
+                    });
+                }
+                else if(layEvent === 'update'){
+                    //obj.update(data);//更新数据
+                    layer.open({
+                        type: 1,//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层)
+                        area: ['70%', '90%'],
+                        title: '修改进入申请信息',
+                        data: data,
+                        content: $("#EntryForm"),
+                        shade: 0,
+                        success: function (layero, index) {
+                            $("#id").val(data.id);
+                            $("#userName").val(data.userName);
+                            $("#destination").val(data.destination);
+                            $("#entryTime").val(data.entryTime);
+                        },
+                        cancel: function (layero, index) {
+                            $("#EntryForm").hide();
+                            $("#EntryForm")[0].reset();
+                            layer.closeAll();
+                        }
+                    })
+                }
+            });
+
+            form.on('submit(PutEntry)', function (data) {
+                $(".entryForm").hide();//将本来隐藏的表单重新隐藏
+                //console.log($("#EntryForm").serialize());
+                let formData = ParseForm(JSON.stringify($("#EntryForm").serializeArray()))
+                console.log(data.field.status, typeof (data.field.status))
+                $.ajax({
+                    url: "../Entry/UpdateEntry",
+                    method: "Put",
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (res) {
+                        if (res) {
+                            //重新加载父页面(相当于刷新页面)
+                            location.reload();
+                            layer.msg("修改成功");
+                            //data.update()
+                        }
+                        else {
+                            layer.msg("修改失败");
+                        }
+                    },
+                    error: function (error) {
+                        layer.alert("修改失败");
+                        console.log(error);
+                    }
+                });
+                $("#EntryForm")[0].reset();
+                layer.closeAll();
+                //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                return false;
+            });
+        });
+
+        function ParseForm(arg){
+            let serializeObj = {};
+            let array = JSON.parse(arg)
+            $.each(array, function (index, element) {
+                console.log(element);
+                if (element.name != 'status' && element.name != 'id' && element.name != "entryTime")
+                    serializeObj[element.name] = element.value;
+                else if (element.name == "entryTime") {
+                    const time = new Date(element.value);
+                    serializeObj[element.name] = new Date(time.getFullYear(), time.getMonth(), time.getDate()
+                                        , time.getHours() + 8, time.getMinutes(), time.getSeconds());
+                }
+                else
+                    serializeObj[element.name] = Number.parseInt(element.value);
+            });
+            return serializeObj;
+        };
+    </script>
+    <script type="text/html" id="barDemo">
+        <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</button>
+        <button class="layui-btn layui-btn-xs layui-btn-warm" lay-event="update">编辑</button>
+        @*<a class="layui-btn layui-btn-xs" lay-event="more">更多信息<i class="layui-icon layui-icon-down"></i></a>*@
+    </script>
+    <script type="text/html" id="status">
+        {{#  if(d.status == 0){ }}
+        <span style="color:orange;">审核中</span>
+        @*<button class="layui-btn layui-btn-xs">通过</button>
+        <button class="layui-btn layui-btn-xs layui-btn-danger">不通过</button>*@
+        {{#  } else if(d.status == 1) { }}
+        <span style="color:orangered;">未通过</span>
+        {{#  } else { }}
+        <span style="color: #0094ff;">已完成</span>
+        {{#  } }}
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>上报信息列表</title>
+    <link href="~/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <table id="escalationInfoList" lay-filter="escalationInfoFilter"></table>
+
+    <form id="EscalationInfoForm" style="display:none;padding:20px" action="" class="layui-form escalationInfoForm">
+        <input id="id" name="id" hidden />
+        <input id="userName" name="userName" hidden />
+        <div class="layui-form-item">
+            <label class="layui-form-label">目的地</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" id="destination" type="text" name="destination"
+                       lay-verify="required" lay-reqtext="目的地是必填项" placeholder="请输入目的地" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">进入时间</label>
+            <div class="layui-input-block">
+                <input id="escalationInfoTime" type="text" name="escalationInfoTime" lay-verify="required" lay-reqtext="进入时间是必填项"
+                       placeholder="请输选择进入时间" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <select name="status" lay-verify="required" lay-reqtext="状态是必选项">
+                    <option value="">请选择一个状态</option>
+                    <option value="0">审核中</option>
+                    <option value="1">未通过</option>
+                    <option value="2">已完成</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="Put" type="submit" class="layui-btn" lay-submit="" lay-filter="PutescalationInfo">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/layui/layui.js"></script>
+    <script>
+        layui.use('table', function () {
+            var table = layui.table
+                , form = layui.form
+                , laydate = layui.laydate; //下拉菜单
+
+            //第一个实例
+            table.render({
+                elem: '#escalationInfoList'
+                , height: 500
+                , url: '../EscalationInfo/GetEscalationInfos' //数据接口
+                , page: true //开启分页
+                , toolbar: 'default'//工具栏
+                , cols: [[ //表头
+                    { type: 'checkbox', fixed: 'left' }
+                    , { field: 'userName', title: '用户名', fixed: 'left'}
+                    , { field: 'id', title: 'ID', sort: true, fixed: 'left' }
+                    , { field: 'time', title: '上报时间' }
+                    , { field: 'currentLocation', title: '当前位置' }
+                    , { field: 'healthStasus', title: '健康状态', sort: true, templet: '#healthStasus' }
+                    , { field: 'healthCodeColor', title: '健康码颜色', sort: true, templet: '#healthCode' }
+                    , { field: 'travelCardStatus', title: '行程卡状态', sort: true, templet: '#travelCard' }
+                    , { fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 240, fixed: 'right' }
+                ]]
+            });
+
+            //监听头部工具栏事件
+            table.on('toolbar(escalationInfoFilter)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id)
+                    , data = checkStatus.data; //获取选中的数据
+                switch (obj.event) {
+                    case 'add':
+                        //打开添加表单
+                        layer.msg('添加操作被禁止');
+                        //layer.alert('添加操作被禁止', { icon: 1 });
+                        break;
+                    case 'update':
+                        layer.msg("更新被禁止");
+                        break;
+                    case 'delete':
+                        if (data.length > 0) {
+                            layer.confirm("真的要删除吗？", function (index) {
+                                let Ids = new Array();
+                                $.each(data, function (i, item) {
+                                    Ids.push(item.id)
+                                });
+                                layer.close(index);
+                                $.ajax({
+                                    url: "../escalationInfo/DeleteescalationInfo",
+                                    method: "delete",
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(Ids),
+                                    success: function (res) {
+                                        layer.msg('删除成功。');
+                                        //刷新当前页面
+                                        location.reload();
+                                    },
+                                    error: function (res) {
+                                        //console.log(res)
+                                        layer.msg('发生异常！');
+                                    }
+                                })
+                            })
+                        }
+                        else {
+                            layer.msg("至少选择一条数据！");
+                        }
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(escalationInfoFilter)', function (obj) { //注：tool 是工具条事件名，escalationInfoFilter 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    , layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'delete') {
+                    layer.confirm('真的删除吗？', function (index) {
+                        let Ids = new Array()
+                        Ids.push(data.id)
+                        $.ajax({
+                            url: "../escalationInfo/DeleteescalationInfo",
+                            method: "Delete",
+                            contentType: 'application/json',
+                            data: JSON.stringify(Ids),
+                            success: function (res) {
+                                layer.msg('删除成功');
+                                obj.del(); //删除对应行（tr）的DOM结构
+                            },
+                            error: function (res) {
+                                layer.msg('发生异常！');
+                            }
+                        })
+                        //向服务端发送删除指令
+                        layer.close(index);//关闭提示框
+                    });
+                }
+            });
+        });
+    </script>
+    <script type="text/html" id="barDemo">
+        <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</button>
+    </script>
+    <script type="text/html" id="status">
+        {{#  if(d.status == 0){ }}
+        <span style="color:orange;">审核中</span>
+        @*<button class="layui-btn layui-btn-xs">通过</button>
+        <button class="layui-btn layui-btn-xs layui-btn-danger">不通过</button>*@
+        {{#  } else if(d.status == 1) { }}
+        <span style="color:orangered;">未通过</span>
+        {{#  } else { }}
+        <span style="color: #0094ff;">已完成</span>
+        {{#  } }}
+    </script>
+    <script type="text/html" id="healthStasus">
+        {{#  if(d.healthStasus == 0){ }}
+        <span style="color:green;">健康</span>
+        {{#  } else if(d.healthStasus == 1) { }}
+        <span style="color:orangered;">发热</span>
+        {{#  } else { }}
+        <span style="color:grey;">其他</span>
+        {{#  } }}
+    </script>
+    <script type="text/html" id="healthCode">
+        {{#  if(d.healthCodeColor == 0){ }}
+        <span style="color:green;">绿码</span>
+        {{#  } else if(d.healthCodeColor == 1) { }}
+        <span style="color:yellow;">黄码</span>
+        {{#  } else if(d.healthCodeColor == 2) { }}
+        <span style="color:red;">红码</span>
+        {{#  } else if(d.healthCodeColor == 3) { }}
+        <span style="color:orangered;">弹窗</span>
+        {{#  } else { }}
+        <span style="color:grey;">其他</span>
+        {{#  } }}
+    </script>
+    <script type="text/html" id="travelCard">
+        {{#  if(d.travelCardStatus == 0){ }}
+        <span style="color:green;">正常</span>
+        {{#  } else { }}
+        <span style="color:red;">异常</span>
+        {{#  } }}
+    </script>
+</body>
+</html>

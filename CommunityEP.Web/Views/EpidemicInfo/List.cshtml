@@ -1,0 +1,335 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>疫情信息列表</title>
+    <link href="~/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+    <table id="epidemicList" lay-filter="epidemicFilter"></table>
+
+    <form id="EpidemicForm" style="display:none;padding:20px" action="" class="layui-form EpidemicForm">
+       @* required（必填项）
+        phone（手机号）
+        email（邮箱）
+        url（网址）
+        number（数字）
+        date（日期）
+        identity（身份证）*@
+        <input id="id" name="id" hidden />
+        <input id="total" name="total" hidden />
+        <div class="layui-form-item">
+            <label class="layui-form-label">确诊人数</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" id="diagnosisCount" type="number" name="diagnosisCount"
+                       lay-verify="number" lay-reqtext="确诊人数是必填项" placeholder="请输入确诊人数" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">无症状感染人数</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" id="asymptomaticCount" type="number" name="asymptomaticCount"
+                       lay-verify="number" lay-reqtext="无症状感染人数是必填项" placeholder="请输入无症状感染人数" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">文本内容</label>
+            <div class="layui-input-block">
+                <textarea id ="content" type="text" name="content"
+                            lay-verify="required" lay-reqtext="文本内容是必填项" placeholder="请输入文本内容" class="layui-input"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">疫情时间</label>
+            <div class="layui-input-block">
+                <input id="epidemicTime" type="text" name="epidemicTime" lay-verify="required" lay-reqtext="疫情时间是必填项"
+                       placeholder="请输选择疫情时间" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="Post" type="submit" class="layui-btn" lay-submit="" lay-filter="PostEpidemic">添加</button>
+                <button id="Put" type="submit" class="layui-btn" lay-submit="" lay-filter="PutEpidemic">保存</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/layui/layui.js"></script>
+    <script>
+        layui.use('table', function () {
+            var table = layui.table
+                , form = layui.form
+                , laydate = layui.laydate; //下拉菜单
+
+            //第一个实例
+            table.render({
+                elem: '#epidemicList'
+                , height: 500
+                , url: '../EpidemicInfo/GetEpidemicInfos' //数据接口
+                , page: true //开启分页
+                , toolbar: 'default'//工具栏
+                , totalRow: true //开启合计行
+                , cols: [[ //表头
+                    { type: 'checkbox', fixed: 'left' }
+                    , { field: 'id', title: 'ID', sort: true, fixed: 'left' }
+                    , { field: 'diagnosisCount', title: '确诊人数', sort: true, totalRow: true }
+                    , { field: 'asymptomaticCount', title: '无症状感染人数', sort: true, totalRow: true }
+                    , { field: 'total', title: '总数', sort: true, totalRow: true }
+                    , { field: 'time', title: '日期', sort: true }
+                    , { field: 'content', title: '内容' }
+                    , { fixed: 'right', title: '操作', align: 'center', toolbar: '#barDemo', width: 240, fixed: 'right' }
+                ]]
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#epidemicTime' //指定元素
+                , type: 'datetime' //类型为日期时间选择器
+            });
+
+            //监听头部工具栏事件
+            table.on('toolbar(epidemicFilter)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id)
+                    , data = checkStatus.data; //获取选中的数据
+                switch (obj.event) {
+                    case 'add':
+                        //打开添加表单
+                        layer.open({
+                            type: 1,//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层)
+                            area: ['70%', '90%'],
+                            title: '修改疫情信息',
+                            data: data,
+                            content: $("#EpidemicForm"),
+                            shade: 0,
+                            success: function (layero, index) {
+                                $("#Post").show();
+                                $("#Put").hide();
+                            },
+                            cancel: function (layero, index) {
+                                $("#EpidemicForm").hide();
+                                $("#EpidemicForm")[0].reset();
+                                layer.closeAll();
+                            }
+                        });
+                        break;
+                    case 'update':
+                        if (data.length == 0) {
+                            layer.msg("请选择一条数据");
+                        }
+                        else if (data.length > 1) {
+                            layer.msg("只能同时编辑一个");
+                        }
+                        else if (data.length == 1) {
+                            var thisData = data[0]
+                            layer.open({
+                                type: 1,//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层)
+                                area: ['70%', '90%'],
+                                title: '修改疫情信息',
+                                data: data,
+                                content: $("#EpidemicForm"),
+                                shade: 0,
+                                success: function (layero, index) {
+                                    $("#Post").hide();
+                                    $("#Put").show();
+                                    $("#id").val(thisData.id);
+                                    $("#diagnosisCount").val(thisData.diagnosisCount);
+                                    $("#asymptomaticCount").val(thisData.asymptomaticCount);
+                                    $("#total").val(thisData.total);
+                                    $("#content").val(thisData.content);
+                                },
+                                cancel: function (layero, index) {
+                                    $("#EpidemicForm").hide();
+                                    $("#EpidemicForm")[0].reset();
+                                    layer.closeAll();
+                                }
+                            })
+                        }
+                        break;
+                    case 'delete':
+                        if (data.length > 0) {
+                            layer.confirm("真的要删除吗？", function (index) {
+                                let Ids = new Array();
+                                $.each(data, function (i, item) {
+                                    Ids.push(item.id)
+                                });
+                                layer.close(index);
+                                $.ajax({
+                                    url: "../EpidemicInfo/DeleteEpidemicInfo",
+                                    method: "delete",
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(Ids),
+                                    success: function (res) {
+                                        layer.msg('删除成功。');
+                                        //刷新当前页面
+                                        location.reload();
+                                    },
+                                    error: function (res) {
+                                        //console.log(res)
+                                        layer.msg('发生异常！');
+                                    }
+                                })
+                            })
+                        }
+                        else {
+                            layer.msg("至少选择一条数据！");
+                        }
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(epidemicFilter)', function (obj) { //注：tool 是工具条事件名，epidemicFilter 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                    , layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'delete') {
+                    layer.confirm('真的删除吗？', function (index) {
+                        let Ids = new Array()
+                        Ids.push(data.id)
+                        $.ajax({
+                            url: "../EpidemicInfo/DeleteEpidemicInfo",
+                            method: "Delete",
+                            contentType: 'application/json',
+                            data: JSON.stringify(Ids),
+                            success: function (res) {
+                                layer.msg('删除成功');
+                                obj.del(); //删除对应行（tr）的DOM结构
+                            },
+                            error: function (res) {
+                                layer.msg('发生异常！');
+                            }
+                        })
+                        //向服务端发送删除指令
+                        layer.close(index);//关闭提示框
+                    });
+                }
+                else if (layEvent === 'update') {
+                    layer.open({
+                        type: 1,//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层)
+                        area: ['70%', '90%'],
+                        title: '修改进入申请信息',
+                        data: data,
+                        content: $("#EpidemicForm"),
+                        shade: 0,
+                        success: function (layero, index) {
+                            $("#Post").hide();
+                            $("#Put").show();
+                            $("#id").val(data.id);
+                            $("#diagnosisCount").val(data.diagnosisCount);
+                            $("#asymptomaticCount").val(data.asymptomaticCount);
+                            $("#total").val(data.total);
+                            $("#content").val(data.content);
+                        },
+                        cancel: function (layero, index) {
+                            $("#EpidemicForm").hide();
+                            $("#EpidemicForm")[0].reset();
+                            layer.closeAll();
+                        }
+                    })
+                }
+            });
+
+            form.on('submit(PostEpidemic)', function (data) {
+                $(".epidemicForm").hide();//将本来隐藏的表单重新隐藏
+                let formData = ParseForm(JSON.stringify($("#EpidemicForm").serializeArray()))
+                if (isNaN(formData.id))
+                    formData.id = 0;
+                formData.total = Number.parseInt(formData.diagnosisCount) + Number.parseInt(formData.asymptomaticCount)
+                console.log(formData)
+                $.ajax({
+                    url: "../EpidemicInfo/AddEpidemicInfo",
+                    method: "Post",
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (res) {
+                        if (res) {
+                            //重新加载父页面(相当于刷新页面)
+                            location.reload();
+                            layer.msg("添加成功");
+                        }
+                        else {
+                            layer.msg("添加失败");
+                        }
+                    },
+                    error: function (error) {
+                        layer.alert("添加失败");
+                        console.log(error);
+                    }
+                });
+                $("#EpidemicForm")[0].reset();
+                layer.closeAll();
+                //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                return false;
+            });
+
+            form.on('submit(PutEpidemic)', function (data) {
+                $(".epidemicForm").hide();//将本来隐藏的表单重新隐藏
+                let formData = ParseForm(JSON.stringify($("#EpidemicForm").serializeArray()))
+                if (isNaN(formData.id))
+                    formData.id = 0;
+                formData.total = Number.parseInt(formData.diagnosisCount) + Number.parseInt(formData.asymptomaticCount)
+                console.log(formData)
+                $.ajax({
+                    url: "../EpidemicInfo/UpdateEpidemicInfo",
+                    method: "Put",
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (res) {
+                        if (res) {
+                            //重新加载父页面(相当于刷新页面)
+                            location.reload();
+                            layer.msg("修改成功");
+                        }
+                        else {
+                            layer.msg("修改失败");
+                        }
+                    },
+                    error: function (error) {
+                        layer.alert("修改失败");
+                        console.log(error);
+                    }
+                });
+                $("#EpidemicForm")[0].reset();
+                layer.closeAll();
+                //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                return false;
+            });
+        });
+
+        function ParseForm(arg) {
+            let serializeObj = {};
+            let array = JSON.parse(arg)
+            $.each(array, function (index, element) {
+                //console.log(element);
+                if (element.name != 'id' && element.name != "epidemicTime")
+                    serializeObj[element.name] = element.value;
+                else if (element.name == "epidemicTime") {
+                    const time = new Date(element.value);
+                    serializeObj[element.name] = new Date(time.getFullYear(), time.getMonth(), time.getDate()
+                        , time.getHours() + 8, time.getMinutes(), time.getSeconds());
+                }
+                else
+                    serializeObj[element.name] = Number.parseInt(element.value);
+            });
+            return serializeObj;
+        };
+    </script>
+    <script type="text/html" id="barDemo">
+        <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</button>
+        <button class="layui-btn layui-btn-xs layui-btn-warm" lay-event="update">编辑</button>
+        @*<a class="layui-btn layui-btn-xs" lay-event="more">更多信息<i class="layui-icon layui-icon-down"></i></a>*@
+    </script>
+    <script type="text/html" id="status">
+        {{#  if(d.status == 0){ }}
+        <span style="color:orange;">审核中</span>
+        @*<button class="layui-btn layui-btn-xs">通过</button>
+        <button class="layui-btn layui-btn-xs layui-btn-danger">不通过</button>*@
+        {{#  } else if(d.status == 1) { }}
+        <span style="color:orangered;">未通过</span>
+        {{#  } else { }}
+        <span style="color: #0094ff;">已完成</span>
+        {{#  } }}
+    </script>
+</body>
+</html>

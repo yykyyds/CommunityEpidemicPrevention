@@ -1,0 +1,89 @@
+﻿#forms {
+    width: 80%;
+    margin:auto;
+}
+
+#messageList {
+    height: 400px;
+    list-style: none;
+    overflow: auto;
+    font-weight: bold;
+    font-size: 24px;
+    background-color: #d2d2d2;
+}
+
+#message{
+    width:50%;
+}
+
+#ChatBrief {
+    font-weight: bold;
+    background-color: #606060;
+    text-align: center;
+    color: white;
+}
+
+.time {
+    font-size: 5px;
+    opacity: 0.6;
+    text-align: center;
+    display:block;
+}
+
+#ChatBrief h2{
+    display: inline;
+}
+
+#ChatBrief span {
+    display: inline-block;
+    font-size: 15px;
+}
+
+.Img{
+    display:inline;
+    width:5%;
+    border-radius:50%;
+    margin:auto;
+}
+
+.left {
+    text-align: left;
+    display: inline-block;
+    width: 95%;
+}
+
+.right {
+    text-align: right;
+    display: inline-block;
+    width: 95%;
+}
+
+#messageList div span {
+    font-weight: bold;
+    opacity: 0.5;
+    font-size: 14px;
+}
+
+#messageList div div div span {
+    opacity: 1.0;
+    font-size: 17px;
+    background-color: #5b9aff;
+    border-radius: 8px 0 8px 0;
+    color: white;
+    padding: 5px;
+}
+
+#bottom {
+    text-align: center;
+    background-color: #4d8fe7;
+}
+
+#bottom div {
+    margin: auto;
+}
+
+#bottom button {
+    background-color: greenyellow;
+    padding: 5px;
+    border-radius: 5px;
+}
