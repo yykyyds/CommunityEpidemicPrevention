@@ -42,7 +42,7 @@ namespace Repository
 
         }
 
-        public async Task<bool> DeleteAsync(List<PurchaseOrder> entryRecords)
+        public async new Task<bool> DeleteAsync(List<PurchaseOrder> entryRecords)
         {
             var result = true;
             foreach (var item in entryRecords)

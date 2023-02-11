@@ -3,12 +3,6 @@ using IRepository;
 using IService;
 using Models.Dtos;
 using Models.Models;
-using Org.BouncyCastle.Crypto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -59,7 +53,7 @@ namespace Service
             return await purchaseOrderRepository.UpdateAsync(po);
         }
 
-        public async Task<bool> DeleteAsync(string ids)
+        public async new Task<bool> DeleteAsync(string ids)
         {
             string[] Ids = new string[ids.Length];
             string[] Ids1 = new string[ids.Length];
