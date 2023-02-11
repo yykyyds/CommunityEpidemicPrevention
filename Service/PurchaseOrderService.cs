@@ -3,12 +3,6 @@ using IRepository;
 using IService;
 using Models.Dtos;
 using Models.Models;
-using Org.BouncyCastle.Crypto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
