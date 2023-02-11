@@ -10,10 +10,10 @@ namespace Models.Dtos
 {
     public class MobileLRModel
     {
-        public string Openid { get; set; }
-        public string NickName { get; set; }
+        public string Openid { get; set; } = default!;
+        public string NickName { get; set; } = default!;
         public gender Gender { get; set; }
-        public string AvatarUrl { get; set; }
+        public string AvatarUrl { get; set; } = default!;
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public role Role { get; set; } = role.普通用户;

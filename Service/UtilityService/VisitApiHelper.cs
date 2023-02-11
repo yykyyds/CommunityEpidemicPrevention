@@ -12,9 +12,9 @@ namespace Service.UtilityService
         private HttpClient httpClient = new HttpClient();
         public static string? Token;
         public static string? Url;
-        public async Task<string> CallApiAsync(string url, string method, string accessToken = null, dynamic entity = null)
+        public async Task<string> CallApiAsync(string url, string method, string accessToken = default!, dynamic entity = default!)
         {
-            HttpResponseMessage? httpResponse = null;
+            HttpResponseMessage? httpResponse = default!;
             if (accessToken != null) httpClient.SetBearerToken(accessToken);
             if (method.ToUpper() == "GET")
                 httpResponse = await httpClient.GetAsync(url);

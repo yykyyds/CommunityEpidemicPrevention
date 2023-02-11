@@ -39,7 +39,6 @@ namespace Repository
                             Status = po.Status,
                             UserName = po.user.NickName
                         });
-
         }
 
         public async new Task<bool> DeleteAsync(List<PurchaseOrder> entryRecords)

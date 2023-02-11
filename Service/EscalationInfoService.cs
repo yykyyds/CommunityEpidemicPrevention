@@ -31,13 +31,14 @@ namespace Service
 
         public async Task<bool> NotifyClockIn(IEmailService emailService, IUserService userService)
         {
+            await Task.Delay(1);
             var t = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd"));
             var userIds = this.escalationInfoRepository.QueryAsync(ec => ec.Time > DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd"))).Result.Select(ec => ec.UserId).Distinct();
             var emails = userService.QueryAsync(u => !userIds.Contains(u.OpenId) && u.Role != role.管理员).Result.Select(u => u.Email).Distinct();
             bool res = true;
             foreach (var email in emails)
             {
-                emailService.SendConfig("通知每日打卡", email, "疫情防控期间请每日完成打卡，你还没有打卡哟。");
+                emailService.SendConfig("通知每日打卡", email??"", "疫情防控期间请每日完成打卡，你还没有打卡哟。");
                 res = res && emailService.SendEmail();
             }
             return res;

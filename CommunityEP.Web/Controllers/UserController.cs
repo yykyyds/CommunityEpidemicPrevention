@@ -27,7 +27,7 @@ namespace CommunityEP.Web.Controllers
 
         public async Task<ApiResponse<UsersDto>> GetUsers(int page,int limit)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/Users/{page}/{limit}", "get", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/Users/{page}/{limit}", "get", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<ApiResponse<UsersDto>>(result);
         }
 
@@ -35,7 +35,7 @@ namespace CommunityEP.Web.Controllers
         public async Task<bool> UpdateUser([FromBody]UsersDto usersDto)
         {
             usersDto.AvatarUrl = usersDto.AvatarUrl ?? "";
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/Users/NoEntity", "put", VisitApiService.Token,usersDto);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/Users/NoEntity", "put", VisitApiService.Token ?? "", usersDto);
             return visitApiService.DeSerialize<bool>(result);
         }
 
@@ -45,7 +45,7 @@ namespace CommunityEP.Web.Controllers
             var nas = "";
             foreach (string name in names)
                 nas += name+",";
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/Users?names={nas}", "delete", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/Users?names={nas}", "delete", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<bool>(result);
         }
     }

@@ -49,7 +49,7 @@ namespace CommunityEP.Api.Controllers
             }
             else
             {
-                emailService.SendConfig("用户注册", user.Email, "你已经完成小区疫情防控系统的微信端注册。");
+                emailService.SendConfig("用户注册", user.Email??"", "你已经完成小区疫情防控系统的微信端注册。");
                 emailService.SendEmail();
                 logger.LogInformation($"用户注册：{user.NickName} {result}");
                 return GeneralApiResult.Success($"{result}。", null);

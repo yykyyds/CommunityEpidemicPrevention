@@ -26,21 +26,21 @@ namespace CommunityEP.Web.Controllers
         [HttpGet]
         public async Task<ApiResponse<EpidemicInfo>> GetEpidemicInfos(int page, int limit)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos/{page}/{limit}", "get", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos/{page}/{limit}", "get", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<ApiResponse<EpidemicInfo>>(result);
         }
 
         [HttpPost]
         public async Task<bool> AddEpidemicInfo([FromBody]EpidemicInfo epidemicInfo)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos", "post", VisitApiService.Token,epidemicInfo);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos", "post", VisitApiService.Token ?? "", epidemicInfo);
             return visitApiService.DeSerialize<bool>(result);
         }
 
         [HttpPut]
         public async Task<bool> UpdateEpidemicInfo([FromBody]EpidemicInfo epidemicInfo)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos", "put", VisitApiService.Token, epidemicInfo);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos", "put", VisitApiService.Token ?? "", epidemicInfo);
             return visitApiService.DeSerialize<bool>(result);
         }
 
@@ -51,7 +51,7 @@ namespace CommunityEP.Web.Controllers
             foreach (int id in Ids)
                 ids += id.ToString() + ",";
             var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EpidemicInfos?Ids={ids}"
-                , "delete", VisitApiService.Token);
+                , "delete", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<bool>(result);
         }
     }

@@ -12,8 +12,8 @@ namespace Service.UtilityService
         string? strPWD = null;//该邮件授权码
         string? strServer = null; //SMTP主机域
         int strPort = 0; //SMTP端口
-        MailMessage mailMsg;
-        SmtpClient smtpClient;
+        MailMessage? mailMsg;
+        SmtpClient? smtpClient;
 
         /// <summary>
         /// 构造函数
@@ -57,7 +57,7 @@ namespace Service.UtilityService
             {
                 Attachment attachMent;
                 attachMent = new Attachment(path);
-                mailMsg.Attachments.Add(attachMent);
+                mailMsg?.Attachments.Add(attachMent);
             }
             catch (Exception ex)
             {
@@ -81,7 +81,7 @@ namespace Service.UtilityService
             smtpClient.Credentials = new System.Net.NetworkCredential(serverEmail, strPWD);
             try
             {
-                smtpClient.Send(mailMsg);
+                smtpClient.Send(mailMsg??default!);
                 return true;
             }
             catch (Exception ex)

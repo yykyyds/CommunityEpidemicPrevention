@@ -23,14 +23,14 @@ namespace CommunityEP.Web.Controllers
         [HttpGet]
         public async Task<ApiResponse<OutRecordDto>> GetOuts(int page, int limit)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/OutRecords/{page}/{limit}", "get", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/OutRecords/{page}/{limit}", "get", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<ApiResponse<OutRecordDto>>(result);
         }
 
         [HttpPut]
         public async Task<bool> UpdateOut([FromBody] OutRecordDto entryRecordDto)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/OutRecords", "put", VisitApiService.Token, entryRecordDto);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/OutRecords", "put", VisitApiService.Token ?? "", entryRecordDto);
             return visitApiService.DeSerialize<bool>(result);
         }
 
@@ -41,7 +41,7 @@ namespace CommunityEP.Web.Controllers
             foreach (int id in Ids)
                 ids += id.ToString() + ",";
             var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/OutRecords?Ids={ids}"
-                , "delete", VisitApiService.Token);
+                , "delete", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<bool>(result);
         }
     }

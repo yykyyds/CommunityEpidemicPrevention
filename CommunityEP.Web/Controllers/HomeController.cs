@@ -38,14 +38,14 @@ namespace CommunityEP.Web.Controllers
         [Authorize]
         public async Task<List<EchartsModel>> GetAllApplications([FromServices]VisitApiService visitApiService)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/BaseApi/AllApplications", "get", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/BaseApi/AllApplications", "get", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<List<EchartsModel>>(result);
         }
 
         [Authorize]
         public async Task<bool> NotifyClockIn([FromServices] VisitApiService visitApiService)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/BaseApi/NotifyClockIn", "post", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/BaseApi/NotifyClockIn", "post", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<bool>(result);
         }
 

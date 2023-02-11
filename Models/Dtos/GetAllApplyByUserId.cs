@@ -8,8 +8,8 @@ namespace Models.Dtos
 {
     public class GetAllApplyByUserId
     {
-        public EntrysByUserId EntryData { get; set; }
-        public OutsByUserId OutData { get; set; }
-        public PurchaseByUserId PurchaseData { get; set; }
+        public EntrysByUserId EntryData { get; set; } = default!;
+        public OutsByUserId OutData { get; set; } = default!;
+        public PurchaseByUserId PurchaseData { get; set; } = default!;
     }
 }

@@ -10,9 +10,9 @@ namespace Models.Dtos
 {
     public class UserUpload
     {
-        public string OpenId { get; set; }
-        public string TripCode { get; set; }
-        public string HealthCode { get; set; }
-        public string NucleicAcidReport { get; set; }
+        public string OpenId { get; set; } = default!;
+        public string TripCode { get; set; } = default!;
+        public string HealthCode { get; set; } = default!;
+        public string NucleicAcidReport { get; set; } = default!;
     }
 }

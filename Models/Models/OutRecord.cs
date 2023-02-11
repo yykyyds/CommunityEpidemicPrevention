@@ -11,11 +11,11 @@ namespace Models.Models
     {
         [SugarColumn(IsPrimaryKey = true,IsIdentity = true)]
         public int Id { get; set; }
-        public string Destination { get; set; }
+        public string Destination { get; set; } = default!;
         public DateTime OutTime { get; set; }
         public status Status { get; set; } = status.审核中;
 
-        public string UserId { get; set; }
+        public string UserId { get; set; } = default!;
         [Navigate(NavigateType.OneToOne, nameof(UserId))]
         public User? user { get; set; }
     }

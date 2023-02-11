@@ -47,7 +47,7 @@ namespace Service
 
         public async Task<bool> UpdateAsync(PurchaseDto purchaseDto)
         {
-            var po = (await purchaseOrderRepository.QueryAsync(po => po.Id == purchaseDto.Id)).FirstOrDefault();
+            PurchaseOrder po = (await purchaseOrderRepository.QueryAsync(po => po.Id == purchaseDto.Id)).FirstOrDefault() ?? default!;
             po.DeliveryTime = purchaseDto.DeliveryTime;
             po.Status = purchaseDto.Status;
             return await purchaseOrderRepository.UpdateAsync(po);

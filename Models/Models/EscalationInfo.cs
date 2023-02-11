@@ -14,12 +14,12 @@ namespace Models.Models
         [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
         public DateTime Time { get; set; } = DateTime.Now;
-        public string CurrentLocation { get; set; }
+        public string CurrentLocation { get; set; } = default!;
         public healthStasus HealthStasus { get; set; }
         public healthCodeColor HealthCodeColor { get; set; }
         public travelCardStatus TravelCardStatus { get; set; }
 
-        public string UserId { get; set; }
+        public string UserId { get; set; } = default!;
         [Navigate(NavigateType.OneToOne, nameof(UserId))]
         public User? user { get; set; }
     }

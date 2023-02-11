@@ -87,7 +87,7 @@ namespace Service.UtilityService
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromSeconds(30),
                         IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                            System.Text.Encoding.UTF8.GetBytes(jwtSection["Secret"]))
+                            System.Text.Encoding.UTF8.GetBytes(jwtSection["Secret"]??""))
                     };
                 });
         }
@@ -99,7 +99,7 @@ namespace Service.UtilityService
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Cookie.Name = cookieSection["Name"];
-                    options.Cookie.HttpOnly = bool.Parse(cookieSection["HttpOnly"]);
+                    options.Cookie.HttpOnly = bool.Parse(cookieSection["HttpOnly"]??"");
                     options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest;
                     //options.SlidingExpiration = true;
                     //options.ExpireTimeSpan = TimeSpan.FromMinutes(30);

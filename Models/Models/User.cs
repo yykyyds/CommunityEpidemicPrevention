@@ -11,21 +11,21 @@ namespace Models.Models
     public class User
     {
         [SugarColumn(IsPrimaryKey = true)]
-        public string OpenId { get; set; }
+        public string OpenId { get; set; } = default!;
         [SugarColumn(ColumnDataType = "nvarchar(30)")]
         [Required(ErrorMessage = "用户名不能为空！")]
         [StringLength(maximumLength:6,MinimumLength = 3,ErrorMessage ="用户名长度在3~6个字符之间")]
-        public string NickName { get; set; }
+        public string NickName { get; set; } = default!;
         [SugarColumn(ColumnDataType = "nvarchar(100)",IsNullable = true)]
         [StringLength(10, ErrorMessage = "密码长度在6~10个字符之间", MinimumLength = 6)]
         [Required(ErrorMessage = "密码不能为空！")]
-        public string PasswordHash { get; set; }
+        public string PasswordHash { get; set; } = default!;
         [Required(ErrorMessage = "确认密码不能为空！")]
         [Compare("PasswordHash",ErrorMessage = "两次密码不一致")]
         [SugarColumn(IsIgnore = true)]
         public string? RePasswordHash { get; set; }
         public gender Gender { get; set; }
-        public string AvatarUrl { get; set; }
+        public string AvatarUrl { get; set; } = default!;
         [SugarColumn(IsNullable = true)]
         public string? Address { get; set; }
         [SugarColumn(IsNullable = true)]

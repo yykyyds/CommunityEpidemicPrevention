@@ -11,7 +11,7 @@ namespace Models.Dtos
     {
         public int Id { get; set; }
         public DateTime Time { get; set; }
-        public string CurrentLocation { get; set; }
+        public string CurrentLocation { get; set; } = default!;
         public healthStasus HealthStasus { get; set; }
         public healthCodeColor HealthCodeColor { get; set; }
         public travelCardStatus TravelCardStatus { get; set; }

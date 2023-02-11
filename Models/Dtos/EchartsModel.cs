@@ -11,6 +11,6 @@ namespace Models.Dtos
         public int EntryCount { get; set; }
         public int OutCount { get; set; }
         public int PurchaseCount { get; set; }
-        public string Time { get; set; }
+        public string Time { get; set; } = default!;
     }
 }

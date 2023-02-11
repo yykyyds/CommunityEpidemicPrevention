@@ -12,9 +12,9 @@ namespace Models.Dtos
 {
     public class UsersDto
     {
-        public string NickName { get; set; }
+        public string NickName { get; set; } = default!;
         public gender Gender { get; set; }
-        public string AvatarUrl { get; set; }
+        public string AvatarUrl { get; set; } = default!;
         public string? Address { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }

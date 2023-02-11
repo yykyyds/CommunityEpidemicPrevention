@@ -5,7 +5,7 @@ namespace CommunityEP.Api.Utilities
 {
     public class ExceptionLogFilter : IAsyncExceptionFilter
     {
-        private ILogger<object> _logger;
+        private ILogger<object> _logger = default!;
 
         public async Task OnExceptionAsync(ExceptionContext context)
         {

@@ -32,7 +32,7 @@ namespace Service.UtilityService
             };
             claims.AddRange(claimsArg);
             var key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(jwtConfig["Secret"]));
+                System.Text.Encoding.UTF8.GetBytes(jwtConfig["Secret"]??""));
             var jwt = new JwtSecurityToken(
                 issuer: jwtConfig["Issuer"],
                 audience: jwtConfig["Audience"],

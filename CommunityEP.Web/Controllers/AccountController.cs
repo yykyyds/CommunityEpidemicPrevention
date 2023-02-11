@@ -49,7 +49,7 @@ namespace CommunityEP.Web.Controllers
             };
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            TempData.TryGetValue("returnUrl", out object returnUrl);
+            //TempData.TryGetValue("returnUrl", out object returnUrl);
             await HttpContext.SignInAsync(claimsPrincipal, new AuthenticationProperties()
             {
                 IsPersistent = userL.IsPersistent,
@@ -64,6 +64,7 @@ namespace CommunityEP.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Register(string? message)
         {
+            await Task.Delay(1);
             ViewData["message"] = message ?? "";
             return View();
         }
@@ -84,6 +85,7 @@ namespace CommunityEP.Web.Controllers
 
         public async Task<IActionResult> Denied()
         {
+            await Task.Delay(1);
             return View();
         }
 

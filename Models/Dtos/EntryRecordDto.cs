@@ -10,9 +10,9 @@ namespace Models.Dtos
     public class EntryRecordDto
     {
         public int Id { get; set; }
-        public string Destination { get; set; }
+        public string Destination { get; set; } = default!; 
         public DateTime EntryTime { get; set; }
         public status Status { get; set; } = status.审核中;
-        public string UserName { get; set; }
+        public string UserName { get; set; } = default!;
     }
 }

@@ -13,7 +13,7 @@ namespace Service
         private readonly IEntryRecordRepository entryRecordRepository;
         private readonly IMapper mapper;
 
-        public EntryRecordService(IEntryRecordRepository entryRecordRepository,IMapper mapper)
+        public EntryRecordService(IEntryRecordRepository entryRecordRepository, IMapper mapper)
         {
             base.repository = entryRecordRepository;
             this.entryRecordRepository = entryRecordRepository;
@@ -45,13 +45,13 @@ namespace Service
 
         public async Task<List<EntryRecordDto>> QueryWithUserAsync(int page, int limit, RefAsync<int> total)
         {
-            return await entryRecordRepository.QueryWithUserAsync(page,limit,total);
+            return await entryRecordRepository.QueryWithUserAsync(page, limit, total);
         }
 
         public async Task<bool> UpdateAsync(EntryRecordDto entryRecordDto, IUserService userService)
         {
-            var user = (await userService.QueryAsync(u => u.NickName == entryRecordDto.UserName)).FirstOrDefault();
-            EntryRecord entryRecord = (await base.QueryAsync(er => er.Id == entryRecordDto.Id)).FirstOrDefault();
+            User user = (await userService.QueryAsync(u => u.NickName == entryRecordDto.UserName)).FirstOrDefault() ?? default!;
+            EntryRecord entryRecord = (await base.QueryAsync(er => er.Id == entryRecordDto.Id)).FirstOrDefault() ?? default!;
             if (user.IsOut == true && entryRecordDto.Status == status.已完成)
             {
                 user.IsOut = false;

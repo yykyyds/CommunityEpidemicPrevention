@@ -23,7 +23,7 @@ namespace CommunityEP.Web.Controllers
         [HttpGet]
         public async Task<ApiResponse<EscalationInfoDto>> GetEscalationInfos(int page, int limit)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EscalationInfos/{page}/{limit}", "get", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EscalationInfos/{page}/{limit}", "get", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<ApiResponse<EscalationInfoDto>>(result);
         }
 
@@ -33,7 +33,7 @@ namespace CommunityEP.Web.Controllers
             var ids = "";
             foreach (int id in Ids)
                 ids += id.ToString() + ",";
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EscalationInfos?Ids={ids}", "delete", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/EscalationInfos?Ids={ids}", "delete", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<bool>(result);
         }
     }

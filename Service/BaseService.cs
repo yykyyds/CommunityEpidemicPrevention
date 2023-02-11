@@ -13,7 +13,7 @@ namespace Service
     public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, new()
     {
         //从子类传入
-        protected IBaseRepository<TEntity> repository { get; set; }
+        protected IBaseRepository<TEntity> repository { get; set; } = default!;
 
         public async Task<bool> AddAsync(TEntity entity)
         {

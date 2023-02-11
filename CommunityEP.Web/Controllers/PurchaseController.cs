@@ -26,14 +26,14 @@ namespace CommunityEP.Web.Controllers
         [HttpGet]
         public async Task<ApiResponse<PurchaseDto>> GetPurchases(int page,int limit)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/PurchaseOrders/{page}/{limit}", "get", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/PurchaseOrders/{page}/{limit}", "get", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<ApiResponse<PurchaseDto>>(result);
         }
 
         [HttpPut]
         public async Task<bool> UpdatePurchase([FromBody]PurchaseDto purchaseDto)
         {
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/PurchaseOrders", "put", VisitApiService.Token, purchaseDto);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/PurchaseOrders", "put", VisitApiService.Token ?? "", purchaseDto);
             return visitApiService.DeSerialize<bool>(result);
         }
 
@@ -43,7 +43,7 @@ namespace CommunityEP.Web.Controllers
             var ids = "";
             foreach (int id in Ids)
                 ids += id.ToString() + ",";
-            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/PurchaseOrders?Ids={ids}", "delete", VisitApiService.Token);
+            var result = await visitApiService.CallApiAsync(VisitApiService.Url + $"/PurchaseOrders?Ids={ids}", "delete", VisitApiService.Token ?? "");
             return visitApiService.DeSerialize<bool>(result);
         }
     }

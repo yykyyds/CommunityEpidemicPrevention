@@ -14,7 +14,6 @@ namespace IService
         Task<PurchaseByUserId> GetPurchaseOrdersByUserIdAsync(string userId);
         Task<List<PurchaseOrder>> GetPurchaseOrdersWithGoodsByUserIdAsync(string userId);
         Task<ApiResponse<PurchaseDto>> GetPurchaseDtos(int page, int limit);
-        Task<bool> DeleteAsync(string ids);
         Task<bool> UpdateAsync(PurchaseDto purchaseDto);
         Task<int> GetPurchaseCountAsync();
     }

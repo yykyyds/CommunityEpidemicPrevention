@@ -55,16 +55,16 @@ namespace Service
 
         public async Task<bool> UpdateAsync(OutRecordDto outRecordDto, IUserService userService)
         {
-            var user = (await userService.QueryAsync(u => u.NickName == outRecordDto.UserName)).FirstOrDefault();
-            OutRecord outRecord = (await base.QueryAsync(or => or.Id == outRecordDto.Id)).FirstOrDefault();
-            if (user.IsOut == false && outRecordDto.Status == status.已完成)
+            User? user = (await userService.QueryAsync(u => u.NickName == outRecordDto.UserName)).FirstOrDefault() ?? default!;
+            OutRecord? outRecord = (await base.QueryAsync(or => or.Id == outRecordDto.Id)).FirstOrDefault() ?? default!;
+            if (user?.IsOut == false && outRecordDto.Status == status.已完成)
             {
                 user.IsOut = true;
             }
             outRecord.Status = outRecordDto.Status;
             outRecord.Destination = outRecordDto.Destination;
             outRecord.OutTime = outRecordDto.OutTime;
-            return await base.UpdateAsync(outRecord) && await userService.UpdateAsync(user);
+            return await base.UpdateAsync(outRecord) && await userService.UpdateAsync(user??default!);
         }
 
         public new async Task<bool> DeleteAsync(string ids)

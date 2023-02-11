@@ -25,7 +25,6 @@ namespace Service
             string[] Ids;
             List<int> Ids1 = new List<int>();
             Ids = ids.Split(',');
-            int j = 0;
             for (int i = 0; i < Ids.Length; i++)
                 if (Ids[i] != "")
                     Ids1.Add(Int32.Parse(Ids[i]));

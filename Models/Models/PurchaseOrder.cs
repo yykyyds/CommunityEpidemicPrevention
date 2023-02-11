@@ -14,13 +14,13 @@ namespace Models.Models
         public int Id { get; set; }
         public DateTime SubmitTime { get; set; } = DateTime.Now;
         public DateTime DeliveryTime { get; set; }
-        public string Address { get; set; }
+        public string Address { get; set; } = default!;
         public status Status { get; set; } = status.审核中;
 
         [Navigate(NavigateType.OneToMany, nameof(Goods.OrderId))]
         public List<Goods>? goodsList { get; set; }
 
-        public string UserId { get; set; }
+        public string UserId { get; set; } = default!;
         [Navigate(NavigateType.OneToOne,nameof(UserId))]
         public User? user { get; set; }
     }
